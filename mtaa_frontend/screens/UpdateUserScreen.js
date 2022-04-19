@@ -1,28 +1,38 @@
 import { View, TextInput, Text, Pressable } from 'react-native'
 import { Formik } from 'formik'
+import { useEffect, useState } from 'react'
 
+import { updateUser } from '../api/updateUser'
+import { getUser } from '../api/getUser'
 import { useAuth } from '../hooks/useAuth'
 import { BORDER_COLOR, INVALID_COLOR } from '../constants/Color'
-import { MainHeading } from '../components/MainHeading'
 import { loginStyles } from './LoginScreen'
+import { Loader } from '../components/Loader'
 import { DefaultScreen } from './DefaultScreen'
 
-export const RegisterScreen = () => {
-  const { register } = useAuth()
+export const UpdateUserScreen = () => {
+  const { user } = useAuth()
+  const [dataLoaded, setDataLoaded] = useState(false)
+  const [userData, setUserData] = useState({})
 
-  return (
+  useEffect(() => {
+    getUser(user.id, user.token).then((res) => {
+      setUserData({
+        username: res.username,
+        email: res.email,
+        password: res.password,
+      })
+      setDataLoaded(true)
+    })
+  }, [])
+
+  return dataLoaded ? (
     <DefaultScreen style={{ justifyContent: 'flex-start' }}>
-      <View style={loginStyles.container}>
-        <MainHeading style={{ marginBottom: 40, alignSelf: 'center' }} />
+      <View style={[loginStyles.container, { marginTop: 50 }]}>
         <Formik
           validateOnChange={false}
           validateOnBlur={false}
-          initialValues={{
-            username: '',
-            email: '',
-            id: '',
-            password: '',
-          }}
+          initialValues={userData}
           validate={(values) => {
             const errors = {}
 
@@ -44,14 +54,14 @@ export const RegisterScreen = () => {
               errors.email = 'Invalid email address'
             }
 
-            if (!values.id) {
-              errors.id = 'ID is required'
-            }
-
             return errors
           }}
           onSubmit={(values) => {
-            register(values.username, values.email, values.id, values.password)
+            updateUser(user.id, user.token, {
+              username: values.username,
+              password: values.password,
+              email: values.email,
+            })
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
             <View>
@@ -93,25 +103,6 @@ export const RegisterScreen = () => {
                 <Text style={loginStyles.errorMessage}>{errors.email}</Text>
               </View>
               <View style={loginStyles.inputContainer}>
-                <Text style={loginStyles.label}>AIS ID</Text>
-                <TextInput
-                  style={[
-                    loginStyles.input,
-                    errors.id ? loginStyles.inputInvalid : null,
-                  ]}
-                  placeholderTextColor={
-                    errors.id ? INVALID_COLOR : BORDER_COLOR
-                  }
-                  placeholder={`${values.id || '110855'}`}
-                  onChangeText={handleChange('id')}
-                  onBlur={handleBlur('id')}
-                  value={values.id}
-                  keyboardType="numeric"
-                  maxLength={6}
-                />
-                <Text style={loginStyles.errorMessage}>{errors.id}</Text>
-              </View>
-              <View style={loginStyles.inputContainer}>
                 <Text style={loginStyles.label}>Password</Text>
                 <TextInput
                   style={[
@@ -130,12 +121,14 @@ export const RegisterScreen = () => {
                 <Text style={loginStyles.errorMessage}>{errors.password}</Text>
               </View>
               <Pressable style={loginStyles.button} onPress={handleSubmit}>
-                <Text style={loginStyles.buttonText}>Create account</Text>
+                <Text style={loginStyles.buttonText}>Update data</Text>
               </Pressable>
             </View>
           )}
         </Formik>
       </View>
     </DefaultScreen>
+  ) : (
+    <Loader />
   )
 }

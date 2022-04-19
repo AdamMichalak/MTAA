@@ -1,0 +1,6 @@
+export const INVALID_COLOR = '#F72F49'
+export const TEXT_COLOR = '#000'
+export const ACTIVE_COLOR = '#0F8CFF'
+export const BORDER_COLOR = '#B8B8B8'
+export const SUCCESS_COLOR = '#1DBF83'
+export const BLUE_COLOR = ''

@@ -1,32 +1,20 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { NavigationContainer } from '@react-navigation/native'
+import { registerRootComponent } from 'expo'
+import React from 'react'
+import FlashMessage from 'react-native-flash-message'
 
-import { WelcomeScreen } from './screens/WelcomeScreen'
-import { RegisterScreen } from './screens/RegisterScreen'
-import { LoginScreen } from './screens/LoginScreen'
+import { AuthProvider } from './hooks/useAuth'
+import { InitialScreen } from './screens/InitialScreen'
 
-const Stack = createNativeStackNavigator()
-
-export default function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Welcome"
-          component={WelcomeScreen}
-          options={{ title: 'Welcome' }}
-        />
-        <Stack.Screen
-          name="Register"
-          component={RegisterScreen}
-          options={{ title: 'Register' }}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{ title: 'Login' }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  )
+class App extends React.Component {
+  render() {
+    return (
+      <AuthProvider>
+        <InitialScreen />
+        <FlashMessage position="top" />
+      </AuthProvider>
+    )
+  }
 }
+
+registerRootComponent(App)
+export default App
