@@ -32,7 +32,6 @@ export const ViewProfileScreen = ({ route }) => {
         psc: res.postalcode,
         country: res.country,
       })
-      setDataLoaded(true)
     })
   }, [isFocused])
 
@@ -88,7 +87,7 @@ export const ViewProfileScreen = ({ route }) => {
         />
         <DefaultButton
           handleClick={() => {
-            navigate('UserPosts')
+            navigate('ViewPosts', { id: userData.user_id })
           }}
           text="View posts"
           style={{ width: '47.5%' }}

@@ -34,7 +34,6 @@ export const ProfileScreen = () => {
         psc: res.postalcode,
         country: res.country,
       })
-      setDataLoaded(true)
     })
   }, [isFocused])
 
@@ -118,8 +117,13 @@ export const ProfileScreen = () => {
         />
         <DefaultButton
           handleClick={() => navigate('UploadPhoto', { type: 'user_photo' })}
-          text="Upload profile picture"
-          style={{ width: '100%', marginTop: 10 }}
+          text="Upload picture"
+          style={{ width: '47.5%', marginTop: 10 }}
+        />
+        <DefaultButton
+          handleClick={() => navigate('UserPosts')}
+          text="View my posts"
+          style={{ width: '47.5%', marginTop: 10 }}
         />
       </View>
       <View style={[styles.section]}>

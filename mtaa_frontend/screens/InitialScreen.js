@@ -14,6 +14,7 @@ import { UpdateAddressScreen } from './UpdateAddressScreen'
 import { ViewProfileScreen } from './ViewProfileScreen'
 import { UserPostsScreen } from './UserPostsScreen'
 import { UploadPhotoScreen } from './UploadPhotoScreen'
+import { ViewPostsScreen } from './ViewPostsScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -72,9 +73,14 @@ export const InitialScreen = () => {
           options={{ title: 'View profile' }}
         />
         <Stack.Screen
+          name="ViewPosts"
+          component={ViewPostsScreen}
+          options={{ title: 'View posts' }}
+        />
+        <Stack.Screen
           name="UserPosts"
           component={UserPostsScreen}
-          options={{ title: 'User posts' }}
+          options={{ title: 'Your posts' }}
         />
         <Stack.Screen
           name="UploadPhoto"

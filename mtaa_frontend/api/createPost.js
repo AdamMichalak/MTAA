@@ -15,7 +15,6 @@ export const createPost = (id, token, file) => {
   })
     .then((response) => {
       response.json().then((data) => {
-        console.log(data)
         if (response.ok) {
           showDefaultSuccessMessage(data.response)
           navigate('Main')

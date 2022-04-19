@@ -1,4 +1,3 @@
-import { registerRootComponent } from 'expo'
 import React from 'react'
 import FlashMessage from 'react-native-flash-message'
 
@@ -16,5 +15,4 @@ class App extends React.Component {
   }
 }
 
-registerRootComponent(App)
 export default App

@@ -7,6 +7,7 @@ import { createPost } from '../api/createPost'
 import { useAuth } from '../hooks/useAuth'
 import { DefaultScreen } from './DefaultScreen'
 import { DefaultButton } from '../components/DefaultButton'
+import { updatePost } from '../api/updatePost'
 
 const windowWidth = Dimensions.get('window').width
 
@@ -58,6 +59,16 @@ export const UploadPhotoScreen = ({ route }) => {
         style={{ marginTop: 10 }}
       />
       <View>
+        {params.photo && !image ? (
+          <Image
+            source={{ uri: `data:image/gif;base64,${params.photo}` }}
+            style={{
+              width: windowWidth - 40,
+              height: windowWidth - 40,
+              marginTop: 20,
+            }}
+          />
+        ) : null}
         {image && (
           <Image
             source={{ uri: image }}
@@ -77,6 +88,8 @@ export const UploadPhotoScreen = ({ route }) => {
             addUserPhoto(user.id, user.token, binary)
           } else if (params.type === 'user_post') {
             createPost(user.id, user.token, binary)
+          } else if (params.type === 'user_post_update') {
+            updatePost(params.post_id, user.token, binary)
           }
         }}
       />

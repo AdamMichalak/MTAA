@@ -22,7 +22,6 @@ export const UpdateAddressScreen = () => {
 
   useEffect(() => {
     getAddress(user.id).then((res) => {
-      console.log(address, 'sdfads')
       setAddress({
         street: res.street,
         city: res.city,
