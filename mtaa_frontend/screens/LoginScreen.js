@@ -4,17 +4,15 @@ import { Formik } from 'formik'
 import { useAuth } from '../hooks/useAuth'
 import { BORDER_COLOR, INVALID_COLOR, TEXT_COLOR } from '../constants/Color'
 import { MainHeading } from '../components/MainHeading'
-import { DefaultScreen } from './DefaultScreen'
+import { KeyboardAvoidingScreen } from './KeyboardAvoidingScreen'
 
 export const LoginScreen = () => {
   const { login } = useAuth()
 
   return (
-    <DefaultScreen>
-      <View style={loginStyles.container}>
-        <MainHeading
-          style={{ marginTop: 20, marginBottom: 50, alignSelf: 'center' }}
-        />
+    <KeyboardAvoidingScreen>
+      <View>
+        <MainHeading style={{ marginBottom: 50, alignSelf: 'center' }} />
         <Formik
           validateOnChange={false}
           validateOnBlur={false}
@@ -73,24 +71,18 @@ export const LoginScreen = () => {
                 />
                 <Text style={loginStyles.errorMessage}>{errors.password}</Text>
               </View>
-              <Pressable style={loginStyles.button} onPress={handleSubmit}>
+              <Pressable style={[loginStyles.button]} onPress={handleSubmit}>
                 <Text style={loginStyles.buttonText}>Login</Text>
               </Pressable>
             </View>
           )}
         </Formik>
       </View>
-    </DefaultScreen>
+    </KeyboardAvoidingScreen>
   )
 }
 
 export const loginStyles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'stretch',
-    justifyContent: 'flex-start',
-  },
   inputContainer: {
     display: 'flex',
     flexDirection: 'column',

@@ -50,8 +50,7 @@
         "android.permission.MODIFY_AUDIO_SETTINGS",
         "android.permission.SYSTEM_ALERT_WINDOW",
         "android.permission.WAKE_LOCK"
-      ],
-      "package": "com.fiit.zoznamka"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"

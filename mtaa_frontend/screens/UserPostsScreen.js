@@ -1,5 +1,4 @@
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
-import Ionicons from '@expo/vector-icons/Ionicons'
 import React, { useEffect, useState } from 'react'
 import { useIsFocused } from '@react-navigation/native'
 
@@ -21,16 +20,24 @@ export const UserPostsScreen = () => {
   const [hasPosts, setHasPosts] = useState(false)
 
   useEffect(() => {
+    let unmounted = false
+
     getUserPosts(user.id).then((res) => {
-      if (res.response) {
-        setHasPosts(false)
-        setDataLoaded(true)
-      } else {
-        setPosts(res)
-        setDataLoaded(true)
-        setHasPosts(true)
+      if (!unmounted) {
+        if (res.response) {
+          setHasPosts(false)
+          setDataLoaded(true)
+        } else {
+          setPosts(res)
+          setDataLoaded(true)
+          setHasPosts(true)
+        }
       }
     })
+
+    return () => {
+      unmounted = true
+    }
   }, [isFocused])
 
   return (
@@ -42,9 +49,8 @@ export const UserPostsScreen = () => {
               {hasPosts ? (
                 posts.map((post, key) => {
                   return (
-                    <>
+                    <View key={key}>
                       <View
-                        key={key}
                         style={{
                           backgroundColor: '#F4EBE2',
                           borderRadius: 8,
@@ -101,7 +107,7 @@ export const UserPostsScreen = () => {
                           handleClick={() => deletePost(post.id, user.token)}
                         />
                       </View>
-                    </>
+                    </View>
                   )
                 })
               ) : (

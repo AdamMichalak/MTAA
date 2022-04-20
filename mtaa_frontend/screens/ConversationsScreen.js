@@ -1,63 +1,77 @@
-import React, { useState } from 'react'
-import {
-  Button,
-  SafeAreaView,
-  StyleSheet,
-  ScrollView,
-  View,
-  Text,
-  StatusBar,
-} from 'react-native'
-// import { mediaDevices, RTCView } from 'react-native-webrtc'
+import React, { useEffect, useState } from 'react'
+import { Text, StyleSheet, Pressable } from 'react-native'
+import { useIsFocused } from '@react-navigation/native'
+
+import { getStudents } from '../api/getStudents'
+import { useAuth } from '../hooks/useAuth'
+import { getStudent } from '../api/getStudent'
+import { BORDER_COLOR } from '../constants/Color'
+import { DefaultScreen } from './DefaultScreen'
+import { navigate } from './RootNavigation'
+import { Loader } from '../components/Loader'
 
 export const ConversationsScreen = () => {
-  // const [stream, setStream] = useState(null)
-  // const start = async () => {
-  //   const devices = await mediaDevices.enumerateDevices()
-  //   if (!stream) {
-  //     let s
-  //     try {
-  //       s = await mediaDevices.getUserMedia({ video: true })
-  //       setStream(s)
-  //     } catch (e) {
-  //       console.error(e)
-  //     }
-  //   }
-  // }
-  // const stop = () => {
-  //   console.log('stop')
-  //   if (stream) {
-  //     stream.release()
-  //     setStream(null)
-  //   }
-  // }
-  return (
-    <>
-      <StatusBar barStyle="dark-content" />
-      <SafeAreaView style={styles.body}>
-        {/*{stream && <RTCView streamURL={stream.toURL()} style={styles.stream} />}*/}
-        <View style={styles.footer}>
-          <Button title="Start" onPress={start} />
-          <Button title="Stop" onPress={stop} />
-        </View>
-      </SafeAreaView>
-    </>
+  const { user } = useAuth()
+  const isFocused = useIsFocused()
+  const [dataLoaded, setDataLoaded] = useState(false)
+  const [userContacts, setUserContacts] = useState('')
+  const [students, setStudents] = useState([])
+
+  useEffect(() => {
+    let unmounted = false
+
+    getStudent(user.id).then((res) => {
+      setUserContacts(res.contacts)
+    })
+
+    getStudents(user.id)
+      .then((res) => {
+        if (!unmounted) {
+          setStudents(res)
+          setDataLoaded(true)
+        }
+      })
+      .catch((error) => {
+        if (!unmounted) {
+          console.log(error)
+        }
+      })
+
+    return () => {
+      unmounted = true
+    }
+  }, [isFocused])
+
+  return dataLoaded ? (
+    <DefaultScreen style={{ marginTop: 60 }}>
+      {students.map((student, key) => {
+        return userContacts.includes(student.user_id) ? (
+          <Pressable
+            key={key}
+            style={styles.container}
+            onPress={() => {
+              navigate('Conversation', { from: user.id, to: student.user_id })
+            }}>
+            <Text style={styles.heading}>{student.fullname}</Text>
+          </Pressable>
+        ) : null
+      })}
+    </DefaultScreen>
+  ) : (
+    <Loader />
   )
 }
 
 const styles = StyleSheet.create({
-  body: {
-    // backgroundColor: Colors.white,
-    ...StyleSheet.absoluteFill,
+  container: {
+    padding: 20,
+    backgroundColor: BORDER_COLOR,
+    marginBottom: 20,
+    borderRadius: 8,
   },
-  stream: {
-    flex: 1,
-  },
-  footer: {
-    //  backgroundColor: Colors.lighter,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
+  heading: {
+    fontWeight: 'bold',
+    fontSize: 30,
+    textAlign: 'center',
   },
 })

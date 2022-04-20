@@ -5,13 +5,13 @@ import { useAuth } from '../hooks/useAuth'
 import { BORDER_COLOR, INVALID_COLOR } from '../constants/Color'
 import { MainHeading } from '../components/MainHeading'
 import { loginStyles } from './LoginScreen'
-import { DefaultScreen } from './DefaultScreen'
+import { KeyboardAvoidingScreen } from './KeyboardAvoidingScreen'
 
 export const RegisterScreen = () => {
   const { register } = useAuth()
 
   return (
-    <DefaultScreen style={{ justifyContent: 'flex-start' }}>
+    <KeyboardAvoidingScreen>
       <View style={loginStyles.container}>
         <MainHeading style={{ marginBottom: 40, alignSelf: 'center' }} />
         <Formik
@@ -136,6 +136,6 @@ export const RegisterScreen = () => {
           )}
         </Formik>
       </View>
-    </DefaultScreen>
+    </KeyboardAvoidingScreen>
   )
 }

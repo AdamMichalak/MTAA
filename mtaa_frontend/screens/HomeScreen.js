@@ -23,10 +23,17 @@ export const HomeScreen = () => {
   const [dataLoaded, setDataLoaded] = useState(false)
 
   useEffect(() => {
+    let unmounted = false
     getAllPosts().then((res) => {
-      setPosts(res)
-      setDataLoaded(true)
+      if (!unmounted) {
+        setPosts(res)
+        setDataLoaded(true)
+      }
     })
+
+    return () => {
+      unmounted = true
+    }
   }, [isFocused, pressed])
 
   return (

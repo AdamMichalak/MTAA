@@ -21,15 +21,22 @@ export const UpdateAddressScreen = () => {
   })
 
   useEffect(() => {
+    let unmounted = false
     getAddress(user.id).then((res) => {
-      setAddress({
-        street: res.street,
-        city: res.city,
-        psc: res.postalcode,
-        country: res.country,
-      })
-      setDataLoaded(true)
+      if (!unmounted) {
+        setAddress({
+          street: res.street,
+          city: res.city,
+          psc: res.postalcode,
+          country: res.country,
+        })
+        setDataLoaded(true)
+      }
     })
+
+    return () => {
+      unmounted = true
+    }
   }, [])
 
   return dataLoaded ? (

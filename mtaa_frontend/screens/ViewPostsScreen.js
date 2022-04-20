@@ -16,16 +16,23 @@ export const ViewPostsScreen = ({ route }) => {
   const [hasPosts, setHasPosts] = useState(false)
 
   useEffect(() => {
+    let unmounted = false
     getUserPosts(params.id).then((res) => {
-      if (res.response) {
-        setHasPosts(false)
-        setDataLoaded(true)
-      } else {
-        setPosts(res)
-        setDataLoaded(true)
-        setHasPosts(true)
+      if (!unmounted) {
+        if (res.response) {
+          setHasPosts(false)
+          setDataLoaded(true)
+        } else {
+          setPosts(res)
+          setDataLoaded(true)
+          setHasPosts(true)
+        }
       }
     })
+
+    return () => {
+      unmounted = true
+    }
   }, [isFocused])
 
   return (

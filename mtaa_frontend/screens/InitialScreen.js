@@ -15,6 +15,8 @@ import { ViewProfileScreen } from './ViewProfileScreen'
 import { UserPostsScreen } from './UserPostsScreen'
 import { UploadPhotoScreen } from './UploadPhotoScreen'
 import { ViewPostsScreen } from './ViewPostsScreen'
+import { SendMessageScreen } from './SendMessageScreen'
+import { ConversationScreen } from './ConversationScreen'
 
 const Stack = createNativeStackNavigator()
 
@@ -86,6 +88,16 @@ export const InitialScreen = () => {
           name="UploadPhoto"
           component={UploadPhotoScreen}
           options={{ title: 'Upload a photo' }}
+        />
+        <Stack.Screen
+          name="SendMessage"
+          component={SendMessageScreen}
+          options={{ title: 'Send a message' }}
+        />
+        <Stack.Screen
+          name="Conversation"
+          component={ConversationScreen}
+          options={{ title: 'Messages' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

@@ -7,6 +7,7 @@ export const CustomDialog = ({
   label,
   title,
   handleClick,
+  style,
 }) => {
   return (
     <Modal
@@ -17,7 +18,7 @@ export const CustomDialog = ({
         Alert.alert('Modal has been closed.')
         setModalVisible(!modalVisible)
       }}>
-      <View style={styles.modalView}>
+      <View style={[styles.modalView, style]}>
         <Text style={styles.modalText}>{title}</Text>
         <View style={{ flexDirection: 'row' }}>
           <Pressable

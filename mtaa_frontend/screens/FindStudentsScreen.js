@@ -32,12 +32,19 @@ export const FindStudentsScreen = () => {
   }
 
   useEffect(() => {
+    let unmounted = false
     getStudents(user.id).then((res) => {
-      setDataLoaded(true)
-      setMoreResults(res.length > maxResults)
-      setStudents(res)
-      setFilteredList(res.slice(0, maxResults))
+      if (!unmounted) {
+        setDataLoaded(true)
+        setMoreResults(res.length > maxResults)
+        setStudents(res)
+        setFilteredList(res.slice(0, maxResults))
+      }
     })
+
+    return () => {
+      unmounted = true
+    }
   }, [isFocused, maxResults])
 
   useEffect(() => {

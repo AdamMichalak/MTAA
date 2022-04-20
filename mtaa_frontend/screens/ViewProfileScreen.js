@@ -20,19 +20,28 @@ export const ViewProfileScreen = ({ route }) => {
   const isFocused = useIsFocused()
 
   useEffect(() => {
+    let unmounted = false
     getStudent(route.params.id).then((res) => {
-      setUserData(res)
-      setDataLoaded(true)
+      if (!unmounted) {
+        setUserData(res)
+        setDataLoaded(true)
+      }
     })
 
     getAddress(route.params.id).then((res) => {
-      setAddress({
-        street: res.street,
-        city: res.city,
-        psc: res.postalcode,
-        country: res.country,
-      })
+      if (!unmounted) {
+        setAddress({
+          street: res.street,
+          city: res.city,
+          psc: res.postalcode,
+          country: res.country,
+        })
+      }
     })
+
+    return () => {
+      unmounted = true
+    }
   }, [isFocused])
 
   return dataLoaded ? (
@@ -80,7 +89,7 @@ export const ViewProfileScreen = ({ route }) => {
         }}>
         <DefaultButton
           handleClick={() => {
-            navigate('Main', { screen: 'Messages' })
+            navigate('SendMessage', { id: userData.user_id })
           }}
           text="Send message"
           style={{ width: '47.5%' }}

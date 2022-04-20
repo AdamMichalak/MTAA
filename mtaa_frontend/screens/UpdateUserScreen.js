@@ -16,14 +16,21 @@ export const UpdateUserScreen = () => {
   const [userData, setUserData] = useState({})
 
   useEffect(() => {
+    let unmounted = false
     getUser(user.id, user.token).then((res) => {
-      setUserData({
-        username: res.username,
-        email: res.email,
-        password: res.password,
-      })
-      setDataLoaded(true)
+      if (!unmounted) {
+        setUserData({
+          username: res.username,
+          email: res.email,
+          password: res.password,
+        })
+        setDataLoaded(true)
+      }
     })
+
+    return () => {
+      unmounted = true
+    }
   }, [])
 
   return dataLoaded ? (

@@ -43,38 +43,44 @@ export const UpdateProfileScreen = () => {
   const { user } = useAuth()
 
   useEffect(() => {
+    let unmounted = false
     getStudent(user.id)
       .then((res) => {
-        setUserData({
-          fullName: res.fullname,
-          phone: res.phonenumber,
-          height: `${res.height}`,
-          weight: `${res.weight}`,
-          hairColor: res.haircolor,
-          age: `${res.age}`,
-          bodyType: res.bodytype,
-          hobbies: {
-            cars: res.hobby.includes('Cars'),
-            music: res.hobby.includes('Music'),
-            fishing: res.hobby.includes('Fishing'),
-            travelling: res.hobby.includes('Travelling'),
-            sport: res.hobby.includes('Sport'),
-            films: res.hobby.includes('Films'),
-            reading: res.hobby.includes('Reading'),
-            gaming: res.hobby.includes('Gaming'),
-            cooking: res.hobby.includes('Cooking'),
-          },
-          interests: {
-            friends: res.interests.includes('Friends'),
-            relationship: res.interests.includes('Relationship'),
-            chat: res.interests.includes('Chat'),
-          },
-        })
-        setDataLoaded(true)
+        if (!unmounted) {
+          setUserData({
+            fullName: res.fullname,
+            phone: res.phonenumber,
+            height: `${res.height}`,
+            weight: `${res.weight}`,
+            hairColor: res.haircolor,
+            age: `${res.age}`,
+            bodyType: res.bodytype,
+            hobbies: {
+              cars: res.hobby.includes('Cars'),
+              music: res.hobby.includes('Music'),
+              fishing: res.hobby.includes('Fishing'),
+              travelling: res.hobby.includes('Travelling'),
+              sport: res.hobby.includes('Sport'),
+              films: res.hobby.includes('Films'),
+              reading: res.hobby.includes('Reading'),
+              gaming: res.hobby.includes('Gaming'),
+              cooking: res.hobby.includes('Cooking'),
+            },
+            interests: {
+              friends: res.interests.includes('Friends'),
+              relationship: res.interests.includes('Relationship'),
+              chat: res.interests.includes('Chat'),
+            },
+          })
+          setDataLoaded(true)
+        }
       })
       .catch((e) => {
         console.log(e)
       })
+    return () => {
+      unmounted = true
+    }
   }, [])
 
   return dataLoaded ? (
