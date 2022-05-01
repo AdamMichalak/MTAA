@@ -1,8 +1,8 @@
 import { API_URL } from '../constants/Url'
 import cache from '../utility/cache'
 
-export async function getUserPosts(id) {
-  const url = `${API_URL}/posts/get/${id}/`
+export async function getMessages(from, to) {
+  const url = `${API_URL}/message/get/${from}/${to}/`
   const response = await fetch(url, {
     method: 'GET',
     headers: {
@@ -14,7 +14,7 @@ export async function getUserPosts(id) {
     const data = await response.json()
     const temp = JSON.parse(JSON.stringify(data))
     const withoutImages = temp.map((x) => {
-      x['attachment'] = 'storage-image'
+      x['attachment'] = x['attachment'] ? 'storage-image' : ''
       return x
     })
 

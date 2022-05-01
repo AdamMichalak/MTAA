@@ -33,14 +33,17 @@ export const FindStudentsScreen = () => {
 
   useEffect(() => {
     let unmounted = false
-    getStudents(user.id).then((res) => {
-      if (!unmounted) {
-        setDataLoaded(true)
-        setMoreResults(res.length > maxResults)
-        setStudents(res)
-        setFilteredList(res.slice(0, maxResults))
-      }
-    })
+
+    if (isFocused) {
+      getStudents(user.id).then((res) => {
+        if (!unmounted && res) {
+          setDataLoaded(true)
+          setMoreResults(res.length > maxResults)
+          setStudents(res)
+          setFilteredList(res.slice(0, maxResults))
+        }
+      })
+    }
 
     return () => {
       unmounted = true
@@ -95,7 +98,7 @@ export const FindStudentsScreen = () => {
                         navigate('ViewProfile', { id: student['user_id'] })
                       }}>
                       <View key={key} style={styles.resultContainer}>
-                        {student.file ? (
+                        {student.file && student.file !== 'storage-image' ? (
                           <Image
                             style={{
                               width: 50,

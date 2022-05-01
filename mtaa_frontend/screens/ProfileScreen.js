@@ -2,6 +2,7 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import Ionicons from '@expo/vector-icons/Ionicons'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 import { getAddress } from '../api/getAddress'
 import { deleteUser } from '../api/deleteUser'
@@ -20,26 +21,29 @@ export const ProfileScreen = () => {
   const [address, setAddress] = useState({})
   const [modalVisible, setModalVisible] = useState(false)
   const isFocused = useIsFocused()
+  const { isInternetReachable } = useNetInfo()
 
   useEffect(() => {
     let unmounted = false
-    getStudent(user.id).then((res) => {
-      if (!unmounted) {
-        setUserData(res)
-        setDataLoaded(true)
-      }
-    })
+    if (isFocused) {
+      getStudent(user.id).then((res) => {
+        if (!unmounted && res) {
+          setUserData(res)
+          setDataLoaded(true)
+        }
+      })
 
-    getAddress(user.id).then((res) => {
-      if (!unmounted) {
-        setAddress({
-          street: res.street,
-          city: res.city,
-          psc: res.postalcode,
-          country: res.country,
-        })
-      }
-    })
+      getAddress(user.id).then((res) => {
+        if (!unmounted && res) {
+          setAddress({
+            street: res.street,
+            city: res.city,
+            psc: res.postalcode,
+            country: res.country,
+          })
+        }
+      })
+    }
 
     return () => {
       unmounted = true
@@ -61,7 +65,7 @@ export const ProfileScreen = () => {
         />
       ) : null}
       <View style={styles.header}>
-        {userData.file ? (
+        {userData.file && userData.file !== 'storage-image' ? (
           <Image
             style={{
               width: 125,
@@ -134,6 +138,15 @@ export const ProfileScreen = () => {
           text="View my posts"
           style={{ width: '47.5%', marginTop: 10 }}
         />
+        {isInternetReachable ? (
+          <DefaultButton
+            text="Synchronize"
+            style={{ width: '100%', marginTop: 10 }}
+            handleClick={() => {
+              navigate('Sync')
+            }}
+          />
+        ) : null}
       </View>
       <View style={[styles.section]}>
         <Ionicons

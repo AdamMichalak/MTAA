@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
-import { Text, StyleSheet, Pressable } from 'react-native'
+import { Text, StyleSheet, Pressable, View } from 'react-native'
 import { useIsFocused } from '@react-navigation/native'
 
 import { getStudents } from '../api/getStudents'
 import { useAuth } from '../hooks/useAuth'
 import { getStudent } from '../api/getStudent'
-import { BORDER_COLOR } from '../constants/Color'
+import { BORDER_COLOR, INVALID_COLOR } from '../constants/Color'
 import { DefaultScreen } from './DefaultScreen'
 import { navigate } from './RootNavigation'
 import { Loader } from '../components/Loader'
 
 export const ConversationsScreen = () => {
-  const { user } = useAuth()
+  const { user, notifications } = useAuth()
   const isFocused = useIsFocused()
   const [dataLoaded, setDataLoaded] = useState(false)
   const [userContacts, setUserContacts] = useState('')
@@ -20,22 +20,26 @@ export const ConversationsScreen = () => {
   useEffect(() => {
     let unmounted = false
 
-    getStudent(user.id).then((res) => {
-      setUserContacts(res.contacts)
-    })
+    if (isFocused) {
+      getStudent(user.id).then((res) => {
+        if (!unmounted && res) {
+          setUserContacts(res.contacts)
+        }
+      })
 
-    getStudents(user.id)
-      .then((res) => {
-        if (!unmounted) {
-          setStudents(res)
-          setDataLoaded(true)
-        }
-      })
-      .catch((error) => {
-        if (!unmounted) {
-          console.log(error)
-        }
-      })
+      getStudents(user.id)
+        .then((res) => {
+          if (!unmounted && res) {
+            setStudents(res)
+            setDataLoaded(true)
+          }
+        })
+        .catch((error) => {
+          if (!unmounted) {
+            console.log(error)
+          }
+        })
+    }
 
     return () => {
       unmounted = true
@@ -50,9 +54,35 @@ export const ConversationsScreen = () => {
             key={key}
             style={styles.container}
             onPress={() => {
-              navigate('Conversation', { from: user.id, to: student.user_id })
+              navigate('Conversation', { to: student.user_id })
             }}>
-            <Text style={styles.heading}>{student.fullname}</Text>
+            <View
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}>
+              <Text style={styles.heading}>{student.fullname}</Text>
+              {Object.keys(notifications) > 0 &&
+              notifications[student.user_id] > 0 ? (
+                <View
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    backgroundColor: INVALID_COLOR,
+                    width: 30,
+                    height: 30,
+                    borderRadius: 20,
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <Text style={{ color: '#fff', fontSize: 15 }}>
+                    {notifications[student.user_id]}
+                  </Text>
+                </View>
+              ) : null}
+            </View>
           </Pressable>
         ) : null
       })}

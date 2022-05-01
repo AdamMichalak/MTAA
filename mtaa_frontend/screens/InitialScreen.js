@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import NetInfo from '@react-native-community/netinfo'
 
 import { navigationRef } from './RootNavigation'
 import { WelcomeScreen } from './WelcomeScreen'
@@ -17,17 +18,32 @@ import { UploadPhotoScreen } from './UploadPhotoScreen'
 import { ViewPostsScreen } from './ViewPostsScreen'
 import { SendMessageScreen } from './SendMessageScreen'
 import { ConversationScreen } from './ConversationScreen'
+import { SyncScreen } from './SyncScreen'
+import {
+  showDefaultSuccessMessage,
+  showDefaultWarnMessage,
+} from '../helpers/showDefaultMessage'
 
 const Stack = createNativeStackNavigator()
 
 export const InitialScreen = () => {
+  NetInfo.addEventListener((state) => {
+    if (state.isInternetReachable) {
+      showDefaultSuccessMessage('Connection restored')
+    }
+
+    if (!state.isInternetReachable) {
+      showDefaultWarnMessage('No internet connection', undefined, false)
+    }
+  })
+
   return (
     <NavigationContainer ref={navigationRef}>
-      <Stack.Navigator>
+      <Stack.Navigator headerStyles={{ height: 40 }}>
         <Stack.Screen
           name="Welcome"
           component={WelcomeScreen}
-          options={{ title: 'Welcome' }}
+          options={{ title: 'Welcome', headerStyle: { height: 60 } }}
         />
         <Stack.Screen
           name="Register"
@@ -98,6 +114,11 @@ export const InitialScreen = () => {
           name="Conversation"
           component={ConversationScreen}
           options={{ title: 'Messages' }}
+        />
+        <Stack.Screen
+          name="Sync"
+          component={SyncScreen}
+          options={{ title: 'Sync' }}
         />
       </Stack.Navigator>
     </NavigationContainer>

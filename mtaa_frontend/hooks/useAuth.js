@@ -33,6 +33,7 @@ const useProvideAuth = () => {
   const [user, setUser] = useState({})
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(null)
+  const [notifications, setNotifications] = useState({})
 
   useEffect(async () => {
     setError('')
@@ -154,5 +155,7 @@ const useProvideAuth = () => {
     login,
     register,
     logout,
+    notifications,
+    setNotifications,
   }
 }

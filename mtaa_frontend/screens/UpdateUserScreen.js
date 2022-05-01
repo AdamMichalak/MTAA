@@ -18,7 +18,7 @@ export const UpdateUserScreen = () => {
   useEffect(() => {
     let unmounted = false
     getUser(user.id, user.token).then((res) => {
-      if (!unmounted) {
+      if (!unmounted && res) {
         setUserData({
           username: res.username,
           email: res.email,

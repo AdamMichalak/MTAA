@@ -9,11 +9,15 @@ import { getUserPosts } from '../api/getUserPosts'
 import { DefaultButton } from '../components/DefaultButton'
 import { navigate } from './RootNavigation'
 import { deletePost } from '../api/deletePost'
+import { useNetInfo } from '@react-native-community/netinfo'
+import { useOffline } from '../hooks/useOffline'
 
 const windowWidth = Dimensions.get('window').width
 
 export const UserPostsScreen = () => {
   const { user } = useAuth()
+  const { isInternetReachable } = useNetInfo()
+  const offline = useOffline()
   const [posts, setPosts] = useState([])
   const isFocused = useIsFocused()
   const [dataLoaded, setDataLoaded] = useState(false)
@@ -22,18 +26,20 @@ export const UserPostsScreen = () => {
   useEffect(() => {
     let unmounted = false
 
-    getUserPosts(user.id).then((res) => {
-      if (!unmounted) {
-        if (res.response) {
-          setHasPosts(false)
-          setDataLoaded(true)
-        } else {
-          setPosts(res)
-          setDataLoaded(true)
-          setHasPosts(true)
+    if (isFocused) {
+      getUserPosts(user.id).then((res) => {
+        if (!unmounted && res) {
+          if (res.response) {
+            setHasPosts(false)
+            setDataLoaded(true)
+          } else {
+            setPosts(res)
+            setDataLoaded(true)
+            setHasPosts(true)
+          }
         }
-      }
-    })
+      })
+    }
 
     return () => {
       unmounted = true
@@ -56,17 +62,34 @@ export const UserPostsScreen = () => {
                           borderRadius: 8,
                           marginBottom: 20,
                         }}>
-                        <Image
-                          style={{
-                            width: windowWidth - 80,
-                            height: windowWidth - 80,
-                            borderRadius: 8,
-                            alignSelf: 'center',
-                          }}
-                          source={{
-                            uri: `data:image/gif;base64,${post.attachment}`,
-                          }}
-                        />
+                        {post.attachment === 'storage-image' ? (
+                          <View
+                            style={{
+                              width: windowWidth - 80,
+                              height: windowWidth - 80,
+                              borderRadius: 8,
+                              alignSelf: 'center',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              padding: 40,
+                            }}>
+                            <Text style={{ textAlign: 'center' }}>
+                              Images are too powerful, to be stored in cache
+                            </Text>
+                          </View>
+                        ) : (
+                          <Image
+                            style={{
+                              width: windowWidth - 80,
+                              height: windowWidth - 80,
+                              borderRadius: 8,
+                              alignSelf: 'center',
+                            }}
+                            source={{
+                              uri: `data:image/gif;base64,${post.attachment}`,
+                            }}
+                          />
+                        )}
                         <View
                           style={{
                             flexDirection: 'row',
@@ -104,7 +127,14 @@ export const UserPostsScreen = () => {
                         <DefaultButton
                           style={styles.button}
                           text="Delete post"
-                          handleClick={() => deletePost(post.id, user.token)}
+                          handleClick={() =>
+                            deletePost(
+                              post.id,
+                              user.token,
+                              isInternetReachable,
+                              offline,
+                            )
+                          }
                         />
                       </View>
                     </View>

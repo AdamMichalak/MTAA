@@ -1,4 +1,11 @@
-import { Dimensions, Image, StyleSheet, Text, View } from 'react-native'
+import {
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  View,
+  RefreshControl,
+} from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import React, { useEffect, useState } from 'react'
 import { useIsFocused } from '@react-navigation/native'
@@ -14,31 +21,53 @@ import { Loader } from '../components/Loader'
 
 const windowWidth = Dimensions.get('window').width
 
+const wait = (timeout) => {
+  return new Promise((resolve) => setTimeout(resolve, timeout))
+}
+
 export const HomeScreen = () => {
   const { user } = useAuth()
   const [posts, setPosts] = useState([])
   const isFocused = useIsFocused()
   const [pressed, setPressed] = useState(false)
   const [pressedOnce, setPressedOnce] = useState(false)
-  const [dataLoaded, setDataLoaded] = useState(false)
+  const [dataLoaded, setDataLoaded] = useState(true)
+  const [refreshing, setRefreshing] = React.useState(false)
 
-  useEffect(() => {
-    let unmounted = false
+  const onRefresh = React.useCallback(() => {
     getAllPosts().then((res) => {
-      if (!unmounted) {
-        setPosts(res)
-        setDataLoaded(true)
-      }
+      setPosts(res)
+      setDataLoaded(true)
     })
+
+    setRefreshing(true)
+    wait(2000).then(() => setRefreshing(false))
+  }, [])
+
+  useEffect(async () => {
+    let unmounted = false
+
+    if (isFocused) {
+      getAllPosts().then((res) => {
+        if (!unmounted && res) {
+          setPosts(res)
+          setDataLoaded(true)
+        }
+      })
+    }
 
     return () => {
       unmounted = true
     }
-  }, [isFocused, pressed])
+  }, [isFocused])
 
   return (
     <>
-      <DefaultScreen style={{ padding: 40 }}>
+      <DefaultScreen
+        style={{ padding: 40 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
         <View>
           {dataLoaded ? (
             <View>
@@ -51,17 +80,34 @@ export const HomeScreen = () => {
                       borderRadius: 8,
                       marginBottom: 20,
                     }}>
-                    <Image
-                      style={{
-                        width: windowWidth - 80,
-                        height: windowWidth - 80,
-                        borderRadius: 8,
-                        alignSelf: 'center',
-                      }}
-                      source={{
-                        uri: `data:image/gif;base64,${post.attachment}`,
-                      }}
-                    />
+                    {post.attachment === 'storage-image' ? (
+                      <View
+                        style={{
+                          width: windowWidth - 80,
+                          height: windowWidth - 80,
+                          borderRadius: 8,
+                          alignSelf: 'center',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          padding: 40,
+                        }}>
+                        <Text style={{ textAlign: 'center' }}>
+                          Images are too powerful, to be stored in cache
+                        </Text>
+                      </View>
+                    ) : (
+                      <Image
+                        style={{
+                          width: windowWidth - 80,
+                          height: windowWidth - 80,
+                          borderRadius: 8,
+                          alignSelf: 'center',
+                        }}
+                        source={{
+                          uri: `data:image/gif;base64,${post.attachment}`,
+                        }}
+                      />
+                    )}
                     <View
                       style={{
                         flexDirection: 'row',

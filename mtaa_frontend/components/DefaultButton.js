@@ -1,4 +1,5 @@
 import { Pressable, StyleSheet, Text } from 'react-native'
+import { BLUE_COLOR } from '../constants/Color'
 
 export const DefaultButton = ({ handleClick, text, style }) => {
   return (
@@ -12,7 +13,7 @@ const styles = StyleSheet.create({
   button: {
     borderRadius: 8,
     height: 40,
-    backgroundColor: '#2196F3',
+    backgroundColor: BLUE_COLOR,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 10,

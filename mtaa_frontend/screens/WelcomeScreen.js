@@ -7,6 +7,7 @@ import { TEXT_COLOR } from '../constants/Color'
 import { navigate } from './RootNavigation'
 import { MainHeading } from '../components/MainHeading'
 import { DefaultScreen } from './DefaultScreen'
+import { NoInternetDialog } from '../components/NoInternetDialog'
 
 export const WelcomeScreen = ({ navigation }) => {
   const { user } = useAuth()
@@ -23,19 +24,22 @@ export const WelcomeScreen = ({ navigation }) => {
   }, [user])
 
   return (
-    <DefaultScreen style={styles.container}>
-      <MainHeading style={{ marginTop: 100, marginBottom: 150 }} />
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.buttonText}>Sign up</Text>
-      </Pressable>
-      <Pressable
-        style={styles.button}
-        onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.buttonText}>Sign in</Text>
-      </Pressable>
-    </DefaultScreen>
+    <>
+      <NoInternetDialog />
+      <DefaultScreen style={styles.container}>
+        <MainHeading style={{ marginTop: 100, marginBottom: 150 }} />
+        <Pressable
+          style={styles.button}
+          onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.buttonText}>Sign up</Text>
+        </Pressable>
+        <Pressable
+          style={styles.button}
+          onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.buttonText}>Sign in</Text>
+        </Pressable>
+      </DefaultScreen>
+    </>
   )
 }
 

@@ -1,18 +1,23 @@
 import { StyleSheet, View, TextInput, Text, Pressable } from 'react-native'
 import { Formik } from 'formik'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 import { useAuth } from '../hooks/useAuth'
 import { BORDER_COLOR, INVALID_COLOR, TEXT_COLOR } from '../constants/Color'
 import { MainHeading } from '../components/MainHeading'
-import { KeyboardAvoidingScreen } from './KeyboardAvoidingScreen'
+import { showDefaultErrorMessage } from '../helpers/showDefaultMessage'
+import { DefaultScreen } from './DefaultScreen'
 
 export const LoginScreen = () => {
   const { login } = useAuth()
+  const info = useNetInfo()
 
   return (
-    <KeyboardAvoidingScreen>
+    <DefaultScreen>
       <View>
-        <MainHeading style={{ marginBottom: 50, alignSelf: 'center' }} />
+        <MainHeading
+          style={{ marginBottom: 50, marginTop: 50, alignSelf: 'center' }}
+        />
         <Formik
           validateOnChange={false}
           validateOnBlur={false}
@@ -31,7 +36,9 @@ export const LoginScreen = () => {
             return errors
           }}
           onSubmit={(values) => {
-            login(values.username, values.password)
+            info.isInternetReachable
+              ? login(values.username, values.password)
+              : showDefaultErrorMessage('No internet connection')
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
             <View>
@@ -78,7 +85,7 @@ export const LoginScreen = () => {
           )}
         </Formik>
       </View>
-    </KeyboardAvoidingScreen>
+    </DefaultScreen>
   )
 }
 

@@ -18,7 +18,7 @@ export const ViewPostsScreen = ({ route }) => {
   useEffect(() => {
     let unmounted = false
     getUserPosts(params.id).then((res) => {
-      if (!unmounted) {
+      if (!unmounted && res) {
         if (res.response) {
           setHasPosts(false)
           setDataLoaded(true)
@@ -51,17 +51,34 @@ export const ViewPostsScreen = ({ route }) => {
                         borderRadius: 8,
                         marginBottom: 20,
                       }}>
-                      <Image
-                        style={{
-                          width: windowWidth - 80,
-                          height: windowWidth - 80,
-                          borderRadius: 8,
-                          alignSelf: 'center',
-                        }}
-                        source={{
-                          uri: `data:image/gif;base64,${post.attachment}`,
-                        }}
-                      />
+                      {post.attachment === 'storage-image' ? (
+                        <View
+                          style={{
+                            width: windowWidth - 80,
+                            height: windowWidth - 80,
+                            borderRadius: 8,
+                            alignSelf: 'center',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            padding: 40,
+                          }}>
+                          <Text style={{ textAlign: 'center' }}>
+                            Images are too powerful, to be stored in cache
+                          </Text>
+                        </View>
+                      ) : (
+                        <Image
+                          style={{
+                            width: windowWidth - 80,
+                            height: windowWidth - 80,
+                            borderRadius: 8,
+                            alignSelf: 'center',
+                          }}
+                          source={{
+                            uri: `data:image/gif;base64,${post.attachment}`,
+                          }}
+                        />
+                      )}
                       <View
                         style={{
                           flexDirection: 'row',

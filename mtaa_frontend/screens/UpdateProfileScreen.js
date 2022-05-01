@@ -46,7 +46,7 @@ export const UpdateProfileScreen = () => {
     let unmounted = false
     getStudent(user.id)
       .then((res) => {
-        if (!unmounted) {
+        if (!unmounted && res) {
           setUserData({
             fullName: res.fullname,
             phone: res.phonenumber,

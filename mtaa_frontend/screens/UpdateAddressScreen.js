@@ -23,7 +23,7 @@ export const UpdateAddressScreen = () => {
   useEffect(() => {
     let unmounted = false
     getAddress(user.id).then((res) => {
-      if (!unmounted) {
+      if (!unmounted && res) {
         setAddress({
           street: res.street,
           city: res.city,

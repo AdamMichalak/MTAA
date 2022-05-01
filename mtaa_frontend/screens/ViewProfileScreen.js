@@ -22,14 +22,14 @@ export const ViewProfileScreen = ({ route }) => {
   useEffect(() => {
     let unmounted = false
     getStudent(route.params.id).then((res) => {
-      if (!unmounted) {
+      if (!unmounted && res) {
         setUserData(res)
         setDataLoaded(true)
       }
     })
 
     getAddress(route.params.id).then((res) => {
-      if (!unmounted) {
+      if (!unmounted && res) {
         setAddress({
           street: res.street,
           city: res.city,
@@ -47,7 +47,7 @@ export const ViewProfileScreen = ({ route }) => {
   return dataLoaded ? (
     <DefaultScreen>
       <View style={styles.header}>
-        {userData.file ? (
+        {userData.file && userData.file !== 'storage-image' ? (
           <Image
             style={{
               width: 125,

@@ -1,4 +1,4 @@
-import { View, Image, Dimensions } from 'react-native'
+import { View, Image, Dimensions, Text } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { useState } from 'react'
 
@@ -8,11 +8,15 @@ import { useAuth } from '../hooks/useAuth'
 import { DefaultScreen } from './DefaultScreen'
 import { DefaultButton } from '../components/DefaultButton'
 import { updatePost } from '../api/updatePost'
+import { useNetInfo } from '@react-native-community/netinfo'
+import { useOffline } from '../hooks/useOffline'
 
 const windowWidth = Dimensions.get('window').width
 
 export const UploadPhotoScreen = ({ route }) => {
   const { user } = useAuth()
+  const { isInternetReachable } = useNetInfo()
+  const offline = useOffline()
   const { params } = route
   const [image, setImage] = useState(null)
   const [binary, setBinary] = useState(null)
@@ -59,7 +63,7 @@ export const UploadPhotoScreen = ({ route }) => {
         style={{ marginTop: 10 }}
       />
       <View>
-        {params.photo && !image ? (
+        {params.photo && !image && params.photo !== 'storage-image' ? (
           <Image
             source={{ uri: `data:image/gif;base64,${params.photo}` }}
             style={{
@@ -68,6 +72,22 @@ export const UploadPhotoScreen = ({ route }) => {
               marginTop: 20,
             }}
           />
+        ) : null}
+        {params.photo === 'storage-image' ? (
+          <View
+            style={{
+              width: windowWidth - 80,
+              height: windowWidth - 80,
+              borderRadius: 8,
+              alignSelf: 'center',
+              alignItems: 'center',
+              justifyContent: 'center',
+              padding: 40,
+            }}>
+            <Text style={{ textAlign: 'center' }}>
+              Images are too powerful, to be stored in cache
+            </Text>
+          </View>
         ) : null}
         {image && (
           <Image
@@ -87,7 +107,13 @@ export const UploadPhotoScreen = ({ route }) => {
           if (params.type === 'user_photo') {
             addUserPhoto(user.id, user.token, binary)
           } else if (params.type === 'user_post') {
-            createPost(user.id, user.token, binary)
+            createPost(
+              user.id,
+              user.token,
+              binary,
+              isInternetReachable,
+              offline,
+            )
           } else if (params.type === 'user_post_update') {
             updatePost(params.post_id, user.token, binary)
           }

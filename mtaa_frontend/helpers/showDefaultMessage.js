@@ -41,3 +41,22 @@ export const showDefaultSuccessMessage = (message) =>
       textAlign: 'center',
     },
   })
+
+export const showDefaultWarnMessage = (message, duration = undefined) =>
+  showMessage({
+    message: message,
+    type: 'warning',
+    position: 'bottom',
+    duration,
+    autoHide: false,
+    hideOnPress: true,
+    style: {
+      ...styles,
+      paddingTop: 20,
+    },
+    titleStyle: {
+      fontSize: 16,
+      color: '#fff',
+      textAlign: 'center',
+    },
+  })

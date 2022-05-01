@@ -1,27 +1,30 @@
 import { View, TextInput, Text, Pressable } from 'react-native'
 import { Formik } from 'formik'
+import { useNetInfo } from '@react-native-community/netinfo'
 
 import { useAuth } from '../hooks/useAuth'
 import { BORDER_COLOR, INVALID_COLOR } from '../constants/Color'
 import { MainHeading } from '../components/MainHeading'
 import { loginStyles } from './LoginScreen'
-import { KeyboardAvoidingScreen } from './KeyboardAvoidingScreen'
+import { showDefaultErrorMessage } from '../helpers/showDefaultMessage'
+import { DefaultScreen } from './DefaultScreen'
 
 export const RegisterScreen = () => {
   const { register } = useAuth()
+  const info = useNetInfo()
 
   return (
-    <KeyboardAvoidingScreen>
+    <DefaultScreen>
       <View style={loginStyles.container}>
         <MainHeading style={{ marginBottom: 40, alignSelf: 'center' }} />
         <Formik
           validateOnChange={false}
           validateOnBlur={false}
           initialValues={{
-            username: '',
-            email: '',
-            id: '',
-            password: '',
+            username: 'jano',
+            email: 'jano@jano.sk',
+            id: '223455',
+            password: 'heslo',
           }}
           validate={(values) => {
             const errors = {}
@@ -51,7 +54,14 @@ export const RegisterScreen = () => {
             return errors
           }}
           onSubmit={(values) => {
-            register(values.username, values.email, values.id, values.password)
+            info.isInternetReachable
+              ? register(
+                  values.username,
+                  values.email,
+                  values.id,
+                  values.password,
+                )
+              : showDefaultErrorMessage('No internet connection')
           }}>
           {({ handleChange, handleBlur, handleSubmit, values, errors }) => (
             <View>
@@ -136,6 +146,6 @@ export const RegisterScreen = () => {
           )}
         </Formik>
       </View>
-    </KeyboardAvoidingScreen>
+    </DefaultScreen>
   )
 }
